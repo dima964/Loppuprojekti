@@ -29,7 +29,6 @@ public class Player_movement : MonoBehaviour
         new HashSet<Collider>();
 
     private bool isGrounded => groundColliders.Count > 0;
-    private bool isPaused = false;
 
     void Awake()
     {
@@ -47,29 +46,18 @@ public class Player_movement : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
-
     void Update()
     {
-        // Pause / Resume with ESC
-        if (Keyboard.current != null &&
-            Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            TogglePause();
-        }
-
-        // Don't allow player input while paused
-        if (isPaused)
+        // Stop player controls if the game is paused or ended
+        if (GameManager.Instance != null &&
+            !GameManager.Instance.IsPlaying)
         {
             moveInput = Vector2.zero;
             jumpRequested = false;
             isSprinting = false;
             return;
         }
+
         moveInput = Vector2.zero;
 
         if (Keyboard.current != null)
@@ -95,12 +83,12 @@ public class Player_movement : MonoBehaviour
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
                 jumpRequested = true;
 
-            // Sprint while Shift is held
+            // Sprint
             isSprinting =
                 Keyboard.current.leftShiftKey.isPressed ||
                 Keyboard.current.rightShiftKey.isPressed;
 
-            // Interact when E is pressed
+            // Interaction
             if (Keyboard.current.eKey.wasPressedThisFrame)
                 TryInteract();
         }
@@ -113,8 +101,10 @@ public class Player_movement : MonoBehaviour
             float mouseX = mouseDelta.x * mouseSensitivity;
             float mouseY = mouseDelta.y * mouseSensitivity;
 
+            // Rotate player left and right
             transform.Rotate(Vector3.up * mouseX);
 
+            // Rotate camera up and down
             cameraPitch -= mouseY;
             cameraPitch = Mathf.Clamp(cameraPitch, -85f, 85f);
 
@@ -126,6 +116,11 @@ public class Player_movement : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Don't move if the game isn't playing
+        if (GameManager.Instance != null &&
+            !GameManager.Instance.IsPlaying)
+            return;
+
         Vector3 movement =
             transform.right * moveInput.x +
             transform.forward * moveInput.y;
@@ -144,6 +139,7 @@ public class Player_movement : MonoBehaviour
 
         rb.linearVelocity = velocity;
 
+        // Jump
         if (jumpRequested && isGrounded)
         {
             rb.AddForce(
@@ -182,6 +178,7 @@ public class Player_movement : MonoBehaviour
         }
     }
 
+    // Ground detection
     void OnCollisionEnter(Collision collision)
     {
         CheckGround(collision);
@@ -215,34 +212,4 @@ public class Player_movement : MonoBehaviour
     {
         groundColliders.Remove(collision.collider);
     }
-
-
-    void TogglePause()
-    {
-        isPaused = !isPaused;
-
-        if (isPaused)
-        {
-            // Pause game
-            Time.timeScale = 0f;
-
-            // Unlock cursor
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-
-            Debug.Log("Game Paused");
-        }
-        else
-        {
-            // Resume game
-            Time.timeScale = 1f;
-
-            // Lock cursor
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
-            Debug.Log("Game Resumed");
-        }
-    }
-
 }
