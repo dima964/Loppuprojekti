@@ -1,0 +1,200 @@
+# Dead Frequency materials - texture paths relative to Models/
+newmtl concrete
+Kd 0.43922 0.45490 0.46667
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/concrete.png
+
+newmtl floor
+Kd 0.40784 0.41569 0.40392
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/floor.png
+
+newmtl platform
+Kd 0.55294 0.53725 0.50196
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/platform.png
+
+newmtl darkfloor
+Kd 0.27059 0.29020 0.29412
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/darkfloor.png
+
+newmtl wall
+Kd 0.43529 0.46275 0.46275
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/wall.png
+
+newmtl walltile
+Kd 0.67843 0.69020 0.66667
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/walltile.png
+
+newmtl trim
+Kd 0.20392 0.23922 0.25098
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/trim.png
+
+newmtl iron
+Kd 0.28235 0.29804 0.30980
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/iron.png
+
+newmtl rust
+Kd 0.43922 0.32549 0.25882
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/rust.png
+
+newmtl wood
+Kd 0.39608 0.29412 0.21569
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/wood.png
+
+newmtl crate
+Kd 0.47451 0.39216 0.29804
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/crate.png
+
+newmtl safety
+Kd 0.77647 0.63529 0.16863
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/safety.png
+
+newmtl red
+Kd 0.67059 0.20000 0.16863
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/red.png
+
+newmtl emergency
+Kd 0.86275 0.15686 0.14510
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/emergency.png
+
+newmtl green
+Kd 0.29020 0.58824 0.44706
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/green.png
+
+newmtl blue
+Kd 0.28235 0.45098 0.55294
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/blue.png
+
+newmtl light
+Kd 0.89804 0.83529 0.67843
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/light.png
+
+newmtl screen
+Kd 0.33333 0.65490 0.64314
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/screen.png
+
+newmtl dark
+Kd 0.11765 0.13725 0.15294
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/dark.png
+
+newmtl gravel
+Kd 0.23137 0.24706 0.25098
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/gravel.png
+
+newmtl rail
+Kd 0.69804 0.66275 0.60392
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/rail.png
+
+newmtl paper
+Kd 0.89020 0.86275 0.78431
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/paper.png
+
+newmtl mattress
+Kd 0.40000 0.42353 0.38824
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/mattress.png
+
+newmtl pillow
+Kd 0.71765 0.68235 0.61569
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/pillow.png
+
+newmtl black
+Kd 0.08627 0.10196 0.11373
+Ka 0.8 0.8 0.8
+Ks 0.06 0.06 0.06
+Ns 14
+illum 2
+map_Kd ../Textures/black.png
