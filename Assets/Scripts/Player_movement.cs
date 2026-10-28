@@ -20,10 +20,12 @@ public class Player_movement : MonoBehaviour
 
     private Rigidbody rb;
     private Vector2 moveInput;
+
     private bool jumpRequested;
     private bool isSprinting;
 
-    private float cameraPitch = 0f;
+    private float cameraPitch;
+    private float cameraYaw;
 
     private HashSet<Collider> groundColliders =
         new HashSet<Collider>();
@@ -34,8 +36,12 @@ public class Player_movement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
 
-        rb.freezeRotation = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        // Prevent the player from tipping over
+        rb.constraints =
+            RigidbodyConstraints.FreezeRotationX |
+            RigidbodyConstraints.FreezeRotationZ;
 
         if (playerCamera == null)
         {
@@ -44,11 +50,20 @@ public class Player_movement : MonoBehaviour
             if (cam != null)
                 playerCamera = cam.transform;
         }
+
+        cameraYaw = rb.rotation.eulerAngles.y;
+
+        if (playerCamera != null)
+        {
+            cameraPitch = Mathf.DeltaAngle(
+                0f, playerCamera.localEulerAngles.x
+            );
+        }
     }
 
     void Update()
     {
-        // Stop player controls if the game is paused or ended
+        // Disable controls while paused or after game ends
         if (GameManager.Instance != null &&
             !GameManager.Instance.IsPlaying)
         {
@@ -59,10 +74,11 @@ public class Player_movement : MonoBehaviour
         }
 
         moveInput = Vector2.zero;
+        isSprinting = false;
 
         if (Keyboard.current != null)
         {
-            // Movement
+            // WASD movement
             if (Keyboard.current.wKey.isPressed ||
                 Keyboard.current.upArrowKey.isPressed)
                 moveInput.y += 1f;
@@ -93,41 +109,58 @@ public class Player_movement : MonoBehaviour
                 TryInteract();
         }
 
-        // Mouse look
-        if (Mouse.current != null && playerCamera != null)
+        // Read mouse input every frame
+        if (Mouse.current != null)
         {
             Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
-            float mouseX = mouseDelta.x * mouseSensitivity;
-            float mouseY = mouseDelta.y * mouseSensitivity;
+            cameraYaw += mouseDelta.x * mouseSensitivity;
+            cameraPitch -= mouseDelta.y * mouseSensitivity;
 
-            // Rotate player left and right
-            transform.Rotate(Vector3.up * mouseX);
-
-            // Rotate camera up and down
-            cameraPitch -= mouseY;
-            cameraPitch = Mathf.Clamp(cameraPitch, -85f, 85f);
-
-            playerCamera.localRotation = Quaternion.Euler(
-                cameraPitch, 0f, 0f
+            cameraPitch = Mathf.Clamp(
+                cameraPitch, -85f, 85f
             );
         }
     }
 
-    void FixedUpdate()
+    void LateUpdate()
     {
-        // Don't move if the game isn't playing
         if (GameManager.Instance != null &&
             !GameManager.Instance.IsPlaying)
             return;
 
+        if (playerCamera == null)
+            return;
+
+        // Smooth, frame-based camera rotation
+        Quaternion yawRotation =
+            Quaternion.Euler(0f, cameraYaw, 0f);
+
+        Quaternion pitchRotation =
+            Quaternion.Euler(cameraPitch, 0f, 0f);
+
+        playerCamera.rotation = yawRotation * pitchRotation;
+    }
+
+    void FixedUpdate()
+    {
+        if (GameManager.Instance != null &&
+            !GameManager.Instance.IsPlaying)
+            return;
+
+        // Rotate Rigidbody through the physics system
+        Quaternion targetRotation =
+            Quaternion.Euler(0f, cameraYaw, 0f);
+
+        rb.MoveRotation(targetRotation);
+
+        // Move relative to camera's horizontal direction
         Vector3 movement =
-            transform.right * moveInput.x +
-            transform.forward * moveInput.y;
+            targetRotation *
+            new Vector3(moveInput.x, 0f, moveInput.y);
 
         movement = movement.normalized;
 
-        // Choose normal or sprint speed
         float currentSpeed = isSprinting
             ? sprintSpeed
             : moveSpeed;
@@ -153,7 +186,7 @@ public class Player_movement : MonoBehaviour
         jumpRequested = false;
     }
 
-    // Interaction system
+    // Interaction
     void TryInteract()
     {
         if (playerCamera == null)
@@ -164,17 +197,14 @@ public class Player_movement : MonoBehaviour
             playerCamera.forward
         );
 
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, interactionDistance))
+        if (Physics.Raycast(ray, out RaycastHit hit,
+            interactionDistance))
         {
             Interactable interactable =
                 hit.collider.GetComponentInParent<Interactable>();
 
             if (interactable != null)
-            {
                 interactable.Interact();
-            }
         }
     }
 
