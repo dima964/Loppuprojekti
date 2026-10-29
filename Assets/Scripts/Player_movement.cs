@@ -1,15 +1,15 @@
 
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Player_movement : MonoBehaviour
 {
-    [Header("Movement")]
+    [Header("Movement")] //These are tags so that it is easier to locatie the stuff instead of surfing through everything.
     public float moveSpeed = 5f;
     public float sprintSpeed = 8f;
     public float jumpForce = 5f;
+    public float groundCheckDistance = 1.1f;
 
     [Header("Camera")]
     public Transform playerCamera;
@@ -19,104 +19,133 @@ public class Player_movement : MonoBehaviour
     public float interactionDistance = 3f;
 
     private Rigidbody rb;
-    private Vector2 moveInput;
 
-    private bool jumpRequested;
-    private bool isSprinting;
+    private float horizontalInput;
+    private float verticalInput;
 
-    private float cameraPitch;
     private float cameraYaw;
+    private float cameraPitch;
 
-    private HashSet<Collider> groundColliders =
-        new HashSet<Collider>();
-
-    private bool isGrounded => groundColliders.Count > 0;
+    private bool isSprinting;
+    private bool jumpRequested;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
 
+        // Make physics movement look smoother
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        // Prevent the player from tipping over
+        // Stop the player from falling sideways
         rb.constraints =
             RigidbodyConstraints.FreezeRotationX |
             RigidbodyConstraints.FreezeRotationZ;
 
+        // Find the camera
         if (playerCamera == null)
         {
             Camera cam = GetComponentInChildren<Camera>();
 
             if (cam != null)
+            {
                 playerCamera = cam.transform;
+            }
         }
 
-        cameraYaw = rb.rotation.eulerAngles.y;
+        cameraYaw = transform.eulerAngles.y;
 
         if (playerCamera != null)
         {
-            cameraPitch = Mathf.DeltaAngle(
-                0f, playerCamera.localEulerAngles.x
-            );
+            cameraPitch = playerCamera.localEulerAngles.x;
+
+            if (cameraPitch > 180f)
+            {
+                cameraPitch -= 360f;
+            }
         }
     }
 
     void Update()
     {
-        // Disable controls while paused or after game ends
-        if (GameManager.Instance != null &&
-            !GameManager.Instance.IsPlaying)
+        // Check if the game is paused or finished
+        if (GameManager.Instance != null)
         {
-            moveInput = Vector2.zero;
-            jumpRequested = false;
-            isSprinting = false;
-            return;
+            if (GameManager.Instance.IsPlaying == false)
+            {
+                horizontalInput = 0f;
+                verticalInput = 0f;
+                isSprinting = false;
+                jumpRequested = false;
+                return;
+            }
         }
 
-        moveInput = Vector2.zero;
-        isSprinting = false;
-
+        // Keyboard controls
         if (Keyboard.current != null)
         {
-            // WASD movement
+            horizontalInput = 0f;
+            verticalInput = 0f;
+
+            // Forward
             if (Keyboard.current.wKey.isPressed ||
                 Keyboard.current.upArrowKey.isPressed)
-                moveInput.y += 1f;
+            {
+                verticalInput += 1f;
+            }
 
+            // Backward
             if (Keyboard.current.sKey.isPressed ||
                 Keyboard.current.downArrowKey.isPressed)
-                moveInput.y -= 1f;
+            {
+                verticalInput -= 1f;
+            }
 
+            // Right
             if (Keyboard.current.dKey.isPressed ||
                 Keyboard.current.rightArrowKey.isPressed)
-                moveInput.x += 1f;
+            {
+                horizontalInput += 1f;
+            }
 
+            // Left
             if (Keyboard.current.aKey.isPressed ||
                 Keyboard.current.leftArrowKey.isPressed)
-                moveInput.x -= 1f;
+            {
+                horizontalInput -= 1f;
+            }
 
-            // Jump
+            // Sprint with Shift
+            isSprinting = false;
+
+            if (Keyboard.current.leftShiftKey.isPressed ||
+                Keyboard.current.rightShiftKey.isPressed)
+            {
+                isSprinting = true;
+            }
+
+            // Jump with Space
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
+            {
                 jumpRequested = true;
+            }
 
-            // Sprint
-            isSprinting =
-                Keyboard.current.leftShiftKey.isPressed ||
-                Keyboard.current.rightShiftKey.isPressed;
-
-            // Interaction
+            // Interact with E
             if (Keyboard.current.eKey.wasPressedThisFrame)
+            {
                 TryInteract();
+            }
         }
 
-        // Read mouse input every frame
+        // Mouse controls
         if (Mouse.current != null)
         {
-            Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+            Vector2 mouseMovement =
+                Mouse.current.delta.ReadValue();
 
-            cameraYaw += mouseDelta.x * mouseSensitivity;
-            cameraPitch -= mouseDelta.y * mouseSensitivity;
+            cameraYaw += mouseMovement.x * mouseSensitivity;
+            cameraPitch -= mouseMovement.y * mouseSensitivity;
 
+            // Stop camera from looking too far up or down
             cameraPitch = Mathf.Clamp(
                 cameraPitch, -85f, 85f
             );
@@ -125,121 +154,110 @@ public class Player_movement : MonoBehaviour
 
     void LateUpdate()
     {
-        if (GameManager.Instance != null &&
-            !GameManager.Instance.IsPlaying)
-            return;
+        // Don't move camera when paused
+        if (GameManager.Instance != null)
+        {
+            if (GameManager.Instance.IsPlaying == false)
+            {
+                return;
+            }
+        }
 
         if (playerCamera == null)
+        {
             return;
+        }
 
-        // Smooth, frame-based camera rotation
-        Quaternion yawRotation =
-            Quaternion.Euler(0f, cameraYaw, 0f);
-
-        Quaternion pitchRotation =
-            Quaternion.Euler(cameraPitch, 0f, 0f);
-
-        playerCamera.rotation = yawRotation * pitchRotation;
+        // Rotate the camera smoothly
+        playerCamera.rotation = Quaternion.Euler(
+            cameraPitch, cameraYaw, 0f
+        );
     }
 
     void FixedUpdate()
     {
-        if (GameManager.Instance != null &&
-            !GameManager.Instance.IsPlaying)
-            return;
+        // Stop physics movement when game isn't playing
+        if (GameManager.Instance != null)
+        {
+            if (GameManager.Instance.IsPlaying == false)
+            {
+                return;
+            }
+        }
 
-        // Rotate Rigidbody through the physics system
-        Quaternion targetRotation =
+        // Turn player left and right
+        Quaternion playerRotation =
             Quaternion.Euler(0f, cameraYaw, 0f);
 
-        rb.MoveRotation(targetRotation);
+        rb.MoveRotation(playerRotation);
 
-        // Move relative to camera's horizontal direction
-        Vector3 movement =
-            targetRotation *
-            new Vector3(moveInput.x, 0f, moveInput.y);
+        // Calculate movement direction
+        Vector3 movement = new Vector3(
+            horizontalInput, 0f, verticalInput
+        );
 
-        movement = movement.normalized;
+        movement = playerRotation * movement;
+        movement.Normalize();
 
-        float currentSpeed = isSprinting
-            ? sprintSpeed
-            : moveSpeed;
+        // Choose walking or sprinting speed
+        float speed = moveSpeed;
 
+        if (isSprinting == true)
+        {
+            speed = sprintSpeed;
+        }
+
+        // Move player
         Vector3 velocity = rb.linearVelocity;
 
-        velocity.x = movement.x * currentSpeed;
-        velocity.z = movement.z * currentSpeed;
+        velocity.x = movement.x * speed;
+        velocity.z = movement.z * speed;
 
         rb.linearVelocity = velocity;
 
-        // Jump
-        if (jumpRequested && isGrounded)
+        // Check if there is ground below the player
+        bool isGrounded = Physics.Raycast(
+            transform.position,
+            Vector3.down,
+            groundCheckDistance
+        );
+
+        // Jump only when touching the ground
+        if (jumpRequested == true && isGrounded == true)
         {
             rb.AddForce(
                 Vector3.up * jumpForce,
                 ForceMode.Impulse
             );
-
-            groundColliders.Clear();
         }
 
         jumpRequested = false;
     }
 
-    // Interaction
+    // Interacting with objects
     void TryInteract()
     {
         if (playerCamera == null)
+        {
             return;
+        }
 
         Ray ray = new Ray(
             playerCamera.position,
             playerCamera.forward
         );
 
-        if (Physics.Raycast(ray, out RaycastHit hit,
-            interactionDistance))
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, interactionDistance))
         {
             Interactable interactable =
                 hit.collider.GetComponentInParent<Interactable>();
 
             if (interactable != null)
-                interactable.Interact();
-        }
-    }
-
-    // Ground detection
-    void OnCollisionEnter(Collision collision)
-    {
-        CheckGround(collision);
-    }
-
-    void OnCollisionStay(Collision collision)
-    {
-        CheckGround(collision);
-    }
-
-    void CheckGround(Collision collision)
-    {
-        bool validGround = false;
-
-        foreach (ContactPoint contact in collision.contacts)
-        {
-            if (contact.normal.y > 0.5f)
             {
-                validGround = true;
-                break;
+                interactable.Interact();
             }
         }
-
-        if (validGround)
-            groundColliders.Add(collision.collider);
-        else
-            groundColliders.Remove(collision.collider);
-    }
-
-    void OnCollisionExit(Collision collision)
-    {
-        groundColliders.Remove(collision.collider);
     }
 }
