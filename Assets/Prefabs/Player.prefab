@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 7024643283233456532}
   - component: {fileID: 5992479627417493202}
   - component: {fileID: 4493299641248773129}
+  - component: {fileID: 394864549035101402}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -269,6 +270,7 @@ MonoBehaviour:
   moveSpeed: 5
   sprintSpeed: 8
   jumpForce: 5
+  groundCheckDistance: 1.1
   playerCamera: {fileID: 4295968607739729526}
   mouseSensitivity: 0.1
   interactionDistance: 3
@@ -299,3 +301,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &394864549035101402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3666104627280874405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 685460810191f8546a7a1e99e25655c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractionUI
+  playerCamera: {fileID: 4295968607739729526}
+  interactionPrompt: {fileID: 0}
+  interactionDistance: 3
