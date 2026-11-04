@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 1220108573297501696}
   - component: {fileID: 1917142528836878965}
   - component: {fileID: 1334281738867427354}
-  - component: {fileID: 5896874662792693350}
   - component: {fileID: 8712117137479664766}
+  - component: {fileID: 1901723946472504118}
   m_Layer: 0
   m_Name: TestRadio
   m_TagString: Untagged
@@ -114,21 +114,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5896874662792693350
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4171717612673207377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6de26641bb296a74cb0dd2a50eb721e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Interactable
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!65 &8712117137479664766
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -150,3 +135,15 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1901723946472504118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4171717612673207377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 18973279ecd622e4baff9fc34ed9db80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RadioInteractable

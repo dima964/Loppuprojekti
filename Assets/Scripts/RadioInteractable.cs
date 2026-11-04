@@ -1,13 +1,27 @@
 
+using System.Diagnostics;
 using UnityEngine;
 
 public class RadioInteractable : Interactable
 {
+    private bool radioUsed = false;
+
     public override void Interact()
     {
-        base.Interact();
+        if (radioUsed)
+            return;
 
-        Debug.Log("Radio activated!");
-        Debug.Log("Fred receives his work instructions.");
+        radioUsed = true;
+
+        UnityEngine.Debug.Log("Radio activated!");
+
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.StartGeneratorQuest();
+        }
+        else
+        {
+            UnityEngine.Debug.LogError("QuestManager not found!");
+        }
     }
 }
