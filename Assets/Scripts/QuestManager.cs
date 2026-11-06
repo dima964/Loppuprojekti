@@ -15,6 +15,8 @@ public class QuestManager : MonoBehaviour
 
     private bool questStarted;
     private bool questCompleted;
+    public bool GeneratorQuestStarted => questStarted;
+    public bool GeneratorQuestCompleted => questCompleted;
 
     void Awake()
     {
