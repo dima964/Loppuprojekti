@@ -1,0 +1,48 @@
+Low Poly Industrial Facility Free
+
+Documentation
+
+Every prop is a prefab in Assets/LowPolyIndustrialFacilityFree/Prefabs/: drag it into a scene. 1 unit = 1 m; a prop's pivot
+is on the floor (or, for a wall prop, on the wall) it rests against. Each part has a box collider.
+
+Look
+Every prefab uses Materials/, on the shader LowPolyIndustrialFacilityFree/Stylized Lit: the texture times the occlusion baked into the
+vertex colours (Baked Occlusion), lit by the scene's lights with a soft falloff (Light Wrap), casting and
+taking shadows, with fog; Glow Map's texels light themselves (lamps, screens, signs; Glow Strength).
+Render pipelines: Built-in and URP: every material uses the pack's own lit shader, with a SubShader for each. Not HDRP, where the materials show magenta until given an HDRP Lit shader.
+
+Animations
+A prop with moving parts has an Animation component with its clips. Standalone decorative loops start automatically.
+Clips controlled by use, pickup, gun or melee behavior wait for that control. Play a clip directly with:
+    GetComponent<Animation>().Play("open");
+Demo/Demo.unity circles the props and plays every animation in turn (Scripts/PropsDemo.cs).
+
+Machines
+A prop that works (its kind is in the list below) has Scripts/Machine.cs on its prefab, set up in the
+inspector: its kind (what a use does: Switch, Button, Turn, Slot, Keypad, Panel, Item, Powered, Gauge),
+the machines it needs to be powered, and UnityEvents for what it does (onSwitched, onLive, onRefused,
+onUsed, onKeyed, onPicked). Machine.cs's comments say what each kind does.
+    lever.Use(carried);                     // the player's use; carried: the items they hold
+    keypad.Use(carried, "keypad_key_4");    // a key: the part they point at
+    door.needs = new[] { lever };           // the door is powered while the lever is on
+
+Textures: atlas.png 2048x2048, atlas_glow.png 2048x2048, ceiling_concrete.png 128x128, floor_concrete.png 128x128, floor_hazard_l.png 128x128, floor_plate.png 128x128, wall_block.png 128x128, wall_cladding.png 128x128, wall_concrete.png 128x128, wall_concrete_band.png 128x128, filtered with mipmaps, colour only: the shading is baked into vertex colours, so no normal maps.
+Icons/: an inventory icon per prop, named after it, imported as a UI sprite.
+
+Props (triangles, size in metres: width x height x depth, animations)
+- floor_concrete: Concrete Floor, 8 tris, 2 x 0 x 2
+- floor_hazard_edge: Floor with a Hazard Edge, 8 tris, 2 x 0 x 2
+- ceiling_concrete: Concrete Ceiling, 8 tris, 2 x 0 x 2
+- wall_concrete_band: Painted Concrete Wall, 36 tris, 2 x 4 x 0.25
+- wall_cladding: Cladding Wall, 36 tris, 2 x 4 x 0.25
+- wall_doorway_cladding: Cladding Doorway, 72 tris, 2 x 4 x 0.25
+- wall_post_steel: Steel Post, 44 tris, 0.25 x 4 x 0.25
+- door_steel: Steel Door, 220 tris, 1.14 x 2.28 x 0.3, open; a machine, powered
+- generator: Diesel Generator, 1344 tris, 2.5 x 1.78 x 0.96, start, run; a machine, switch
+- fuse_box: Fuse Box, 976 tris, 0.732 x 1.402 x 0.685, fit; a machine, slot
+- fuse: Cartridge Fuse, 132 tris, 0.26 x 0.055 x 0.055; a machine, item
+- lever_wall: Main Lever, 680 tris, 0.3 x 1.183 x 0.152, pull; a machine, switch
+- beacon: Rotating Beacon, 400 tris, 0.16 x 0.565 x 0.278, spin; a machine, powered
+- pallet_boxes: Pallet of Boxes, 286 tris, 1.2 x 1.244 x 0.8
+- drum_steel_blue: Blue Steel Drum, 506 tris, 0.594 x 0.88 x 0.594
+- batten_fluorescent: Fluorescent Batten, 1156 tris, 1.52 x 0.591 x 0.251; a machine, powered
