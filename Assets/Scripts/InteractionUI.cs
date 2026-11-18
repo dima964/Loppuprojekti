@@ -58,7 +58,7 @@ public class InteractionUI : MonoBehaviour
             }
         }
 
-        HidePrompt();
+        HidePrompt();  
     }
 
     void ShowPrompt(string message)
