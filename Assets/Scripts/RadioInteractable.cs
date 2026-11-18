@@ -1,15 +1,26 @@
+using System.Diagnostics;
 using UnityEngine;
 
 public class RadioInteractable : Interactable
 {
+    [SerializeField] private RadioTuningMinigame tuningMinigame;
+
     public override void Interact()
     {
-        if (QuestManager.Instance == null)
+        QuestManager quests = QuestManager.Instance;
+
+        if (quests == null)
         {
             UnityEngine.Debug.LogError("QuestManager not found!");
             return;
         }
 
-        QuestManager.Instance.ReceiveQuestFromRadio();
+        if (quests.IsQuestActive(2) && tuningMinigame != null)
+        {
+            tuningMinigame.Open();
+            return;
+        }
+
+        quests.ReceiveQuestFromRadio();
     }
 }
